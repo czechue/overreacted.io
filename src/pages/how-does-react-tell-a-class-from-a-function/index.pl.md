@@ -4,7 +4,7 @@ date: '2018-12-02'
 spoiler: Porozmawiamy o klasach, operatorach new i instanceof, łańcuchu prototypów, oraz architekturze API.
 ---
 
-Rozważ ten przykładowy komponent `Greeting`, który jest zdefiniowany jako funkcja:
+Rozważmy ten przykładowy komponent `Greeting`, który jest zdefiniowany jako funkcja:
 
 ```jsx
 function Greeting() {
@@ -27,13 +27,13 @@ class Greeting extends React.Component {
 Kiedy chcesz wyrenderować `<Greeting />`, nie przejmujesz się jak jest on zdefiniowany:
 
 ```jsx
-// Class or function — whatever.
+// Klasa czy funkcja - bez znaczenia.
 <Greeting />
 ```
 
 Jednak *React* rozróżnia tę kwestię.
 
-Jeśli `Greeting` jest funkcją, React musi wywołać ją:
+Jeśli `Greeting` jest funkcją, React musi ją wywołać:
 
 ```jsx
 // Your code
@@ -45,7 +45,7 @@ function Greeting() {
 const result = Greeting(props); // <p>Hello</p>
 ```
 
-Lecz gdy `Greeting` jest klasą, React musi zinstancjonować go z wykorzystaniem operatora `new` i *wówczas* wywołać metodę `render` na nowopowstałej instancji:
+Lecz gdy `Greeting` jest klasą, React musi zinstancjonować ją z wykorzystaniem operatora `new` i *wówczas* wywołać metodę `render` na nowopowstałej instancji:
 
 ```jsx
 // Twój kod
@@ -60,15 +60,15 @@ const instance = new Greeting(props); // Greeting {}
 const result = instance.render(); // <p>Hello</p>
 ```
 
-W obydwu przypadkach zadaniem Reacta jest otrzymać wyrenderowany node (w tym przykładzie, `<p>Hello</p>`). Jednak dokładne kroki zależą od tego jak `Greeting` jest zdefiniowany.
+W obydwu przypadkach zadaniem React jest otrzymać wyrenderowany node (w tym przykładzie, `<p>Hello</p>`). Jednak dokładne kroki zależą od tego jak `Greeting` jest zdefiniowany.
 
-**Więc skąd React wie czy coś jest klasą czy funkcją?**
+**Skąd więc React wie czy coś jest klasą czy funkcją?**
 
-Tak jak i w moim [poprzednim poście](/why-do-we-write-super-props/), **nie *musisz* tego wiedzieć aby być produktywnym w React.** Ja nie wiedziałem tego przez lata. Proszę nie zamieniaj tego w pytanie rekrutacyjne. Prawdę mówiąc, ten post jest bardziej o JavaScripcie niż o React.
+Tak jak i w moim [poprzednim poście](/why-do-we-write-super-props/), **nie *musisz* tego wiedzieć aby być produktywnym w React.** Ja nie znałem odpowiedzi na to pytanie przez lata. Proszę nie zamieniaj go również w pytanie rekrutacyjne. Prawdę mówiąc, ten post jest bardziej o JavaScript niż o React.
 
-Ten blog jest przeznaczony dla ciekawskich czytelników, którzy chcą wiedzieć *dlaczego* React działa w określony sposób. Czy jesteś tą osobą? W takim razie zgłębmy temat.
+Blog jest przeznaczony dla ciekawskich czytelników, którzy chcą wiedzieć *dlaczego* React działa w określony sposób. Jeśli jesteś taką osobą, to zapraszam do wspólnego zgłębienia tematu.
 
-**To jest długa podróż. Zapnij pasy. Ten post nie posiada wielu informacji o samym React, ale przyjrzymy się niektórym aspektom `new`, `this`, `class`, funkcji strzałkowych, `prototype`, `__proto__`, `instanceof` i jak te rzeczy współpracują ze sobą w JavaScript. Na twoje szczęście zbyt często nie musisz o nich myśleć gdy *korzystasz* z React. Jeśli jednak implementujesz React...**
+**Rozpoczynamy długą podróż. Zapnij pasy. Ten post nie posiada wielu informacji o samym React, ale przyjrzymy się niektórym aspektom `new`, `this`, `class`, funkcjom strzałkowym, `prototype`, `__proto__`, `instanceof` i jak te rzeczy współgrają ze sobą w JavaScript. Na twoje szczęście nie musisz o nich zbyt często myśleć gdy *korzystasz* z React. Jeśli jednak implementujesz React...**
 
 (Chcesz tylko znać odpowiedzi na pytania? Zescrolluj do samego końca.)
 
@@ -151,7 +151,7 @@ fred.sayHi();
 
 Jeśli napiszesz funkcję, JavaScript nie jest w stanie odgadnąć czy ma ona być wywołana jak `alert()` lub czy ma służyć jako konstruktor, przykładowo `new Person()`.  Pominięcie `new` dla funkcji takiej jak `Person` prowadziłoby do nieprzewidzianego zachowania.
 
-**Składnia klas pozwala nam powiedzieć: "To nie jest tylko funkcja - to klasa i ma konstruktor".** Jeśli zapomnisz `new` podczas wywołania, JavaScript zwróci błąd:
+**Składnia klas pozwala nam powiedzieć: "To nie jest tylko funkcja - to klasa i ma konstruktor".** Jeśli zapomnisz więc `new` podczas wywołania, JavaScript zwróci błąd:
 
 ```jsx
 let fred = new Person('Fred');
@@ -182,9 +182,9 @@ To oznacza kłopoty.
 
 ---
 
-Zanim zobaczymy, jak React rozwiązuje tę kwestię, ważne jest aby pamiętać, że większość osób korzystających z React używa kompilatorów (np. Babel), aby skompilować nowoczesne funkcjonalności, takie jak klasy do starszych przeglądarek. Musimy więc wziąć pod uwagę kompilatory w naszych rozważaniach.
+Zanim przyjmrzymy się, jak React rozwiązuje tę kwestię, ważne jest aby pamiętać, że większość osób korzystających z React używa kompilatorów (np. Babel), aby skompilować nowoczesne funkcjonalności, takie jak klasy do starszych przeglądarek. Musimy więc wziąć pod uwagę kompilatory w naszych rozważaniach.
 
-We wczesnej wersji Babela, klasy mogły być wywoływane bez `new`. Jednak zostało to naprawione - poprzez wygenerowanie dodatkowego kodu:
+We wczesnej wersji Babel, klasy mogły być wywoływane bez `new`. Jednak zostało to naprawione - poprzez wygenerowanie dodatkowego kodu:
 
 ```jsx
 function Person(name) {
